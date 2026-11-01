@@ -10,6 +10,8 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.util.Patterns;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -62,7 +64,21 @@ public class MainActivity extends AppCompatActivity {
 
         btnBirthDate.setOnClickListener(v -> showDatePicker());
 
-        btnSubmit.setOnClickListener(v -> showSummary());
+
+        btnSubmit.setOnClickListener(v -> {
+            if (validateForm()) {
+                showSummary();
+            }
+        });
+
+        btnSubmit.setEnabled(false);
+
+        cbTerms.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    btnSubmit.setEnabled(isChecked);
+                });
+
+
 
         sbLevel.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
@@ -142,4 +158,50 @@ public class MainActivity extends AppCompatActivity {
 
         tvSummary.setText(summary);
     }
+
+    private boolean validateForm() {
+
+        String name = etName.getText().toString().trim();
+
+        if (name.isEmpty()) {
+            etName.setError(getString(R.string.error_name));
+            etName.requestFocus();
+            return false;
+        }
+
+        String email = etEmail.getText().toString().trim();
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etEmail.setError(getString(R.string.error_email));
+            etEmail.requestFocus();
+            return false;
+        }
+
+        if (birthDate.isEmpty()) {
+            Toast.makeText(this, R.string.error_date,
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (spCourse.getSelectedItemPosition() == 0) {
+            Toast.makeText(this, R.string.error_course,
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (rgMode.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(this, R.string.error_mode,
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!cbTerms.isChecked()) {
+            Toast.makeText(this, R.string.error_terms,
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+    }
+
 }
