@@ -1,24 +1,133 @@
 package com.example.formularzzapisu;
 
-import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    EditText etName, etEmail;
+    Button btnBirthDate, btnSubmit;
+    Spinner spCourse;
+    RadioGroup rgMode;
+    SeekBar sbLevel;
+    TextView tvLevelValue, tvSummary;
+    MaterialSwitch swNewsletter;
+    CheckBox cbTerms;
+
+    String birthDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        etName = findViewById(R.id.etName);
+        etEmail = findViewById(R.id.etEmail);
+        btnBirthDate = findViewById(R.id.btnBirthDate);
+        btnSubmit = findViewById(R.id.btnSubmit);
+        spCourse = findViewById(R.id.spCourse);
+        rgMode = findViewById(R.id.rgMode);
+        sbLevel = findViewById(R.id.sbLevel);
+        tvLevelValue = findViewById(R.id.tvLevelValue);
+        tvSummary = findViewById(R.id.tvSummary);
+        swNewsletter = findViewById(R.id.swNewsletter);
+        cbTerms = findViewById(R.id.cbTerms);
+
+        btnBirthDate.setOnClickListener(v -> showDatePicker());
+
+        btnSubmit.setOnClickListener(v -> showSummary());
+
+        sbLevel.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(
+                            SeekBar seekBar, int progress, boolean fromUser) {
+                        tvLevelValue.setText(String.valueOf(progress));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+    }
+
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+
+        DatePickerDialog dialog = new DatePickerDialog(
+                this,
+                (view, year, month, day) -> {
+                    birthDate = String.format(
+                            Locale.US, "%04d-%02d-%02d",
+                            year, month + 1, day);
+
+                    btnBirthDate.setText(birthDate);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        dialog.show();
+    }
+
+    private void showSummary() {
+
+        String name = etName.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
+
+        String mode = getString(R.string.mode_none);
+
+        if (rgMode.getCheckedRadioButtonId() == R.id.rbOnsite) {
+            mode = getString(R.string.mode_onsite);
+        }
+
+        if (rgMode.getCheckedRadioButtonId() == R.id.rbRemote) {
+            mode = getString(R.string.mode_remote);
+        }
+
+        String newsletter = getString(R.string.no_short);
+
+        if (swNewsletter.isChecked()) {
+            newsletter = getString(R.string.yes_short);
+        }
+
+        String course = getString(R.string.course_none);
+
+        if (spCourse.getSelectedItem() != null) {
+            course = spCourse.getSelectedItem().toString();
+        }
+
+        String summary = getString(
+                R.string.summary_format,
+                name,
+                email,
+                birthDate,
+                course,
+                mode,
+                sbLevel.getProgress(),
+                newsletter);
+
+        tvSummary.setText(summary);
     }
 }
