@@ -42,4 +42,14 @@
     <string name="no">Popraw</string>
     <string name="sent">Zgłoszenie wysłane</string>
     <string name="undo">Cofnij</string>
+
+
+    <string-array name="courses">
+        <item>-- wybierz kurs --</item>
+        <item>Programowanie w Javie</item>
+        <item>Aplikacje mobilne</item>
+        <item>Bazy danych</item>
+        <item>Sieci komputerowe</item>
+    </string-array>
+
 </resources>

@@ -1,6 +1,6 @@
 package com.example.formularzzapisu;
 
-
+import android.widget.ArrayAdapter;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
@@ -47,6 +47,18 @@ public class MainActivity extends AppCompatActivity {
         tvSummary = findViewById(R.id.tvSummary);
         swNewsletter = findViewById(R.id.swNewsletter);
         cbTerms = findViewById(R.id.cbTerms);
+
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(
+                        this,
+                        R.array.courses,
+                        android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+
+        spCourse.setAdapter(adapter);
+
 
         btnBirthDate.setOnClickListener(v -> showDatePicker());
 
